@@ -1,3 +1,5 @@
 *.o
 *.gb
 *.sav
+*.exe
+.vscode
