@@ -1,2 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+bin/** linguist-vendored
+include/** linguist-vendored
+lib/** linguist-vendored
