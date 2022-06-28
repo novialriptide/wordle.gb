@@ -4,12 +4,17 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <stdlib.h>
 #include <rand.h>
 #include "main.h"
 
 void main()
 {
-    uint16_t seed = LY_REG;
+    uint16_t seed = DIV_REG;
+    printf("Press Start\n");
+    waitpad(J_START);
+    cls();
+
     seed |= (uint16_t)DIV_REG << 8;
     initrand(seed);
 
@@ -24,10 +29,9 @@ void main()
     WORD_LIST[7] = "piano";
     WORD_LIST[8] = "water";
     WORD_LIST[9] = "shark";
-    WORD_LIST[10] = "feces";
 
     uint8_t joydata;
-    int word_choice_index = rand() % WORD_LIST_LENGTH + 1;
+    uint8_t word_choice_index = rand() % WORD_LIST_LENGTH;
     int chances = 5;
     int selected_letter_index = 65; // 65 to 90
     int word_index = 0;
@@ -37,9 +41,10 @@ void main()
     int won = 0;
 
     while(1) {
+        printf("%s\n", word_choice);
         /* Honestly, I don't know why I have to do this. */
         if (player_word[0] == NULL) {
-            printf("Word:");
+            printf("Word:\n");
         }
         else {
             printf("Word: %s\n", player_word);
