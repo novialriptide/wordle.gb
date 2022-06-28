@@ -1,0 +1,1 @@
+#define WORD_LIST_LENGTH 10
