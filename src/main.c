@@ -21,17 +21,17 @@ void clear_screen() {
 void draw_word(char text[], int length, int x, int y) {
     int text_length = strlen(text);
     for(int i = 0; i < length; i++) {
-        if (i < text_length) {
-            gotogxy(x + i, y);
-            gprintf("%c", text[i]);
-        }
         box(
-            (x + i) * GAMEBOY_TILE_LENGTH,
-            y * GAMEBOY_TILE_LENGTH,
-            (x + i + 1) * GAMEBOY_TILE_LENGTH,
+            (x * GAMEBOY_TILE_LENGTH) - 2 + i * GAMEBOY_TILE_LENGTH * 2,
+            y * GAMEBOY_TILE_LENGTH - 2,
+            (x + 1) * GAMEBOY_TILE_LENGTH + i * GAMEBOY_TILE_LENGTH * 2,
             (y + 1) * GAMEBOY_TILE_LENGTH,
             M_NOFILL
         );
+        if (i < text_length) {
+            gotogxy(x + i * 2, y);
+            gprintf("%c", text[i]);
+        }
     }
 }
 
@@ -48,7 +48,7 @@ void main() {
     gotogxy(5, 10);
     gprintf("Press Start");
 
-    draw_word("LMAO", 5, 7, 4);
+    draw_word("LMAO", 5, 5, 4);
 
     waitpad(J_START);
     clear_screen();
@@ -84,14 +84,19 @@ void main() {
         // printf("%s", word_choice);
         /* Honestly, I don't know why I have to do this. */
         if (player_word[0] == NULL) {
-            box(2*8, 4*8, 3*8, 5*8, M_NOFILL);
+            draw_word("", 5, 5, 5);
+            draw_word("", 5, 5, 6);
+            draw_word("", 5, 5, 7);
+            draw_word("", 5, 5, 8);
+            draw_word("", 5, 5, 9);
+            draw_word("", 5, 5, 10);
         }
         else {
-            gprintf("Word: %s", player_word);
+            draw_word(player_word, 5, 5, 5);
         }
         
         gotogxy(2, 15);
-        gprintf("Input: %c", selected_letter_index);
+        gprintf("Input:%c", selected_letter_index);
         
         while(1) {
             joydata = joypad();
