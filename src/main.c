@@ -1,4 +1,5 @@
 #include <gb/gb.h>
+#include <gb/drawing.h>
 #include <types.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -7,13 +8,30 @@
 #include <stdlib.h>
 #include <rand.h>
 #include "main.h"
+#include "tiles.c"
 
-void main()
-{
+#define GAMEBOY_MAX_TILES 256
+
+void clear_screen() {
+    color(WHITE, WHITE, SOLID);
+    box(0, 0, GRAPHICS_WIDTH - 1, GRAPHICS_HEIGHT - 1, M_FILL);
+    color(BLACK, WHITE, SOLID);
+}
+
+void main() {
+    // Load tiles
+    set_sprite_data(0, 26, tiles);
+
     uint16_t seed = DIV_REG;
-    printf("Press Start\n");
+    gotogxy(3, 7);
+    gprintf("Wordle by");
+    gotogxy(4, 8);
+    gprintf("Andrew Hong");
+    gotogxy(5, 9);
+    gprintf("Press Start");
     waitpad(J_START);
-    cls();
+    clear_screen();
+
 
     seed |= (uint16_t)DIV_REG << 8;
     initrand(seed);
@@ -35,22 +53,24 @@ void main()
     int chances = 5;
     int selected_letter_index = 65; // 65 to 90
     int word_index = 0;
-    char player_word[6];
+    char player_word[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
     char word_choice[6];
     strcpy(word_choice, WORD_LIST[word_choice_index]);
     int won = 0;
 
     while(1) {
-        printf("%s\n", word_choice);
+        gotogxy(2, 4);
+        // printf("%s", word_choice);
         /* Honestly, I don't know why I have to do this. */
         if (player_word[0] == NULL) {
-            printf("Word:\n");
+            box(2*8, 4*8, 3*8, 5*8, M_NOFILL);
         }
         else {
-            printf("Word: %s\n", player_word);
+            gprintf("Word: %s", player_word);
         }
         
-        printf("Selected Letter: %c\n", selected_letter_index);
+        gotogxy(2, 15);
+        gprintf("Input: %c", selected_letter_index);
         
         while(1) {
             joydata = joypad();
@@ -71,8 +91,13 @@ void main()
                 word_index++;
                 break;
             }
+            if (joydata & J_B && word_index < 5) {
+                word_index--;
+                player_word[word_index] = NULL;
+                break;
+            }
         }
-        cls();
+        clear_screen();
         delay(200);
 
         wait_vbl_done();
