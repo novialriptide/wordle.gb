@@ -10,7 +10,7 @@
 #include "main.h"
 #include "tiles.c"
 
-#define GAMEBOY_MAX_TILES 256
+#define GAMEBOY_TILE_LENGTH 8
 
 void clear_screen() {
     color(WHITE, WHITE, SOLID);
@@ -18,17 +18,38 @@ void clear_screen() {
     color(BLACK, WHITE, SOLID);
 }
 
+void draw_word(char text[], int length, int x, int y) {
+    int text_length = strlen(text);
+    for(int i = 0; i < length; i++) {
+        if (i < text_length) {
+            gotogxy(x + i, y);
+            gprintf("%c", text[i]);
+        }
+        box(
+            (x + i) * GAMEBOY_TILE_LENGTH,
+            y * GAMEBOY_TILE_LENGTH,
+            (x + i + 1) * GAMEBOY_TILE_LENGTH,
+            (y + 1) * GAMEBOY_TILE_LENGTH,
+            M_NOFILL
+        );
+    }
+}
+
 void main() {
     // Load tiles
     set_sprite_data(0, 26, tiles);
 
+
     uint16_t seed = DIV_REG;
-    gotogxy(3, 7);
+    gotogxy(3, 6);
     gprintf("Wordle by");
-    gotogxy(4, 8);
+    gotogxy(4, 7);
     gprintf("Andrew Hong");
-    gotogxy(5, 9);
+    gotogxy(5, 10);
     gprintf("Press Start");
+
+    draw_word("LMAO", 5, 7, 4);
+
     waitpad(J_START);
     clear_screen();
 
