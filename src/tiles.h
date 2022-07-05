@@ -26,9 +26,9 @@
 #define __tiles_h_INCLUDE
 
 /* Bank of tiles. */
-#define TileLabelBank 0
+#define tilesBank 0
 /* Start of tile array. */
-extern const unsigned char TileLabel[];
+extern const unsigned char tiles[];
 
 #endif
 
