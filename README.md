@@ -13,3 +13,9 @@ Everyone's favorite game, now on GameBoy.
 
 ## Notice
 Files inside `/bin`, `/lib`, and `/include` are from gbdk-2020 4.0.6!
+
+## Compile
+```shell
+cd src
+./compile
+```
