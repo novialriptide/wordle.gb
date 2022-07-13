@@ -11,13 +11,15 @@
 
 #define GAMEBOY_TILE_LENGTH 8
 
+int* all_color_values[6][5];
+
 void clear_screen() {
     color(WHITE, WHITE, SOLID);
     box(0, 0, GRAPHICS_WIDTH - 1, GRAPHICS_HEIGHT - 1, M_FILL);
     color(BLACK, WHITE, SOLID);
 }
 
-void draw_word(char text[], int length, int x, int y) {
+void draw_word(char text[], int length, int x, int y, int* color_values[]) {
     int text_length = strlen(text);
     for(int i = 0; i < length; i++) {
         box(
@@ -34,6 +36,31 @@ void draw_word(char text[], int length, int x, int y) {
     }
 }
 
+void compare_word(char user[], char ai[], int player_index) {
+    int checks = 0;
+    /*
+    * 0 = RESET
+    * 1 = GREEN
+    * 2 = YELLOW
+    */
+    for (int i = 0; i < strlen(user); i++) {
+        all_color_values[player_index][i] = 0;
+    }
+
+    for (int user_i = 0; user_i < strlen(user); user_i++) {
+        for (int ai_i = 0; ai_i < strlen(ai); ai_i++) {
+            if (user[user_i] == ai[ai_i] && user == ai) {
+                checks += 1;
+                all_color_values[player_index][user_i] = 1;
+            }
+            else if (user[user_i] == ai[ai_i]) {
+                checks += 1;
+                all_color_values[player_index][user_i] = 2;
+            }
+        }
+    }
+}
+
 void main() {
     uint16_t seed = DIV_REG;
     gotogxy(3, 6);
@@ -43,7 +70,7 @@ void main() {
     gotogxy(5, 10);
     gprintf("Press Start");
 
-    draw_word("LMAO", 5, 5, 4);
+    draw_word("LMAO", 5, 5, 4, all_color_values[0]);
 
     waitpad(J_START);
     clear_screen();
@@ -81,12 +108,12 @@ void main() {
 
     while(1) {
         gotogxy(2, 4);
-        draw_word(player_words[0], 5, 1, 2);
-        draw_word(player_words[1], 5, 1, 4);
-        draw_word(player_words[2], 5, 1, 6);
-        draw_word(player_words[3], 5, 1, 8);
-        draw_word(player_words[4], 5, 1, 10);
-        draw_word(player_words[5], 5, 1, 12);
+        draw_word(player_words[0], 5, 1, 2, all_color_values[0]);
+        draw_word(player_words[1], 5, 1, 4, all_color_values[1]);
+        draw_word(player_words[2], 5, 1, 6, all_color_values[2]);
+        draw_word(player_words[3], 5, 1, 8, all_color_values[3]);
+        draw_word(player_words[4], 5, 1, 10, all_color_values[4]);
+        draw_word(player_words[5], 5, 1, 12, all_color_values[5]);
         
         gotogxy(2, 15);
         gprintf("Input:%c", selected_letter_index);
@@ -118,6 +145,7 @@ void main() {
             if (word_index >= 5) {
                 player_index += 1;
                 word_index = 0;
+                compare_word(player_words[player_index], word_choice, player_index);
                 break;
             }
         }
