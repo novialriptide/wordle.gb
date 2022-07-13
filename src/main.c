@@ -97,8 +97,6 @@ void main() {
 
     while(1) {
         gotogxy(2, 4);
-        // printf("%s", word_choice);
-        /* Honestly, I don't know why I have to do this. */
         draw_word(player_words[0], 5, 1, 2);
         draw_word(player_words[1], 5, 1, 4);
         draw_word(player_words[2], 5, 1, 6);
@@ -134,8 +132,6 @@ void main() {
                 break;
             }
         }
-        clear_screen();
-        // delay(200);
 
         wait_vbl_done();
     }
