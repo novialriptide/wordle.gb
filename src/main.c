@@ -74,7 +74,23 @@ void main() {
     int chances = 5;
     int selected_letter_index = 65; // 65 to 90
     int word_index = 0;
-    char player_word[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
+
+    char keyboard[26][1] = {
+        "A", "B", "C", "D", "E", "F",
+        "G", "H", "I", "J", "K", "L",
+        "M", "N", "O", "P", "Q", "R",
+        "S", "T", "U", "V", "W", "X",
+        "Y", "Z"
+    };
+
+    char player_words[6][6] = {
+        {NULL, NULL, NULL, NULL, NULL, NULL},
+        {NULL, NULL, NULL, NULL, NULL, NULL},
+        {NULL, NULL, NULL, NULL, NULL, NULL},
+        {NULL, NULL, NULL, NULL, NULL, NULL},
+        {NULL, NULL, NULL, NULL, NULL, NULL},
+        {NULL, NULL, NULL, NULL, NULL, NULL}
+    };
     char word_choice[6];
     strcpy(word_choice, WORD_LIST[word_choice_index]);
     int won = 0;
@@ -83,17 +99,12 @@ void main() {
         gotogxy(2, 4);
         // printf("%s", word_choice);
         /* Honestly, I don't know why I have to do this. */
-        if (player_word[0] == NULL) {
-            draw_word("", 5, 5, 5);
-            draw_word("", 5, 5, 6);
-            draw_word("", 5, 5, 7);
-            draw_word("", 5, 5, 8);
-            draw_word("", 5, 5, 9);
-            draw_word("", 5, 5, 10);
-        }
-        else {
-            draw_word(player_word, 5, 5, 5);
-        }
+        draw_word(player_words[0], 5, 1, 2);
+        draw_word(player_words[1], 5, 1, 4);
+        draw_word(player_words[2], 5, 1, 6);
+        draw_word(player_words[3], 5, 1, 8);
+        draw_word(player_words[4], 5, 1, 10);
+        draw_word(player_words[5], 5, 1, 12);
         
         gotogxy(2, 15);
         gprintf("Input:%c", selected_letter_index);
@@ -113,18 +124,18 @@ void main() {
                 }
             }
             if (joydata & J_A && word_index < 5) {
-                player_word[word_index] = (char) selected_letter_index;
+                player_words[0][word_index] = (char) selected_letter_index;
                 word_index++;
                 break;
             }
             if (joydata & J_B && word_index < 5) {
                 word_index--;
-                player_word[word_index] = NULL;
+                player_words[0][word_index] = NULL;
                 break;
             }
         }
         clear_screen();
-        delay(200);
+        // delay(200);
 
         wait_vbl_done();
     }
