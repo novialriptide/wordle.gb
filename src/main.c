@@ -57,6 +57,7 @@ void main() {
     int chances = 5;
     int selected_letter_index = 65; // 65 to 90
     int word_index = 0;
+    int player_index = 0;
 
     char keyboard[26][1] = {
         "A", "B", "C", "D", "E", "F",
@@ -105,13 +106,18 @@ void main() {
                 }
             }
             if (joydata & J_A && word_index < 5) {
-                player_words[0][word_index] = (char) selected_letter_index;
+                player_words[player_index][word_index] = (char) selected_letter_index;
                 word_index++;
                 break;
             }
             if (joydata & J_B && word_index < 5) {
                 word_index--;
-                player_words[0][word_index] = NULL;
+                player_words[player_index][word_index] = NULL;
+                break;
+            }
+            if (word_index >= 5) {
+                player_index += 1;
+                word_index = 0;
                 break;
             }
         }
