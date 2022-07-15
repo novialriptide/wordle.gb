@@ -11,7 +11,14 @@
 
 #define GAMEBOY_TILE_LENGTH 8
 
-int* all_color_values[6][5];
+int all_color_values[6][5] = {
+    {0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0}
+};
 
 void clear_screen() {
     color(WHITE, WHITE, SOLID);
@@ -19,7 +26,7 @@ void clear_screen() {
     color(BLACK, WHITE, SOLID);
 }
 
-void draw_word(char text[], int length, int x, int y, int* color_values[]) {
+void draw_word(char text[], int length, int x, int y, int color_values[]) {
     int text_length = strlen(text);
     for(int i = 0; i < length; i++) {
         box(
@@ -31,7 +38,21 @@ void draw_word(char text[], int length, int x, int y, int* color_values[]) {
         );
         if (i < text_length) {
             gotogxy(x + i * 2, y);
+
+            switch(color_values[i]) {
+                case 0:
+                    color(BLACK, WHITE, SOLID);
+                    break;
+                case 1:
+                    color(LTGREY, WHITE, SOLID);
+                    break;
+                case 2:
+                    color(DKGREY, WHITE, SOLID);
+                    break;
+            }
+
             gprintf("%c", text[i]);
+            color(BLACK, WHITE, SOLID);
         }
     }
 }
@@ -43,9 +64,6 @@ void compare_word(char user[], char ai[], int player_index) {
     * 1 = GREEN
     * 2 = YELLOW
     */
-    for (int i = 0; i < strlen(user); i++) {
-        all_color_values[player_index][i] = 0;
-    }
 
     for (int user_i = 0; user_i < strlen(user); user_i++) {
         for (int ai_i = 0; ai_i < strlen(ai); ai_i++) {
@@ -70,6 +88,7 @@ void main() {
     gotogxy(5, 10);
     gprintf("Press Start");
 
+
     draw_word("LMAO", 5, 5, 4, all_color_values[0]);
 
     waitpad(J_START);
@@ -86,7 +105,7 @@ void main() {
     int word_index = 0;
     int player_index = 0;
 
-    char keyboard[26][1] = {
+    char keyboard[26][0] = {
         "A", "B", "C", "D", "E", "F",
         "G", "H", "I", "J", "K", "L",
         "M", "N", "O", "P", "Q", "R",
@@ -143,9 +162,9 @@ void main() {
                 break;
             }
             if (word_index >= 5) {
+                compare_word(player_words[player_index], word_choice, player_index);
                 player_index += 1;
                 word_index = 0;
-                compare_word(player_words[player_index], word_choice, player_index);
                 break;
             }
         }
