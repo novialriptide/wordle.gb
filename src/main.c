@@ -11,23 +11,15 @@
 
 #define GAMEBOY_TILE_LENGTH 8
 
-int all_color_values[6][5] = {
-    {0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0}
-};
-
 void clear_screen() {
     color(WHITE, WHITE, SOLID);
     box(0, 0, GRAPHICS_WIDTH - 1, GRAPHICS_HEIGHT - 1, M_FILL);
     color(BLACK, WHITE, SOLID);
 }
 
-void draw_word(char text[], int length, int x, int y, int color_values[]) {
+void draw_word(char text[], int length, int x, int y) {
     int text_length = strlen(text);
+    int i2 = 1;
     for(int i = 0; i < length; i++) {
         box(
             (x * GAMEBOY_TILE_LENGTH) - 2 + i * GAMEBOY_TILE_LENGTH * 2,
@@ -36,28 +28,26 @@ void draw_word(char text[], int length, int x, int y, int color_values[]) {
             (y + 1) * GAMEBOY_TILE_LENGTH,
             M_NOFILL
         );
-        if (i < text_length) {
-            gotogxy(x + i * 2, y);
-
-            switch(color_values[i]) {
-                case 0:
-                    color(BLACK, WHITE, SOLID);
-                    break;
-                case 1:
-                    color(LTGREY, WHITE, SOLID);
-                    break;
-                case 2:
-                    color(DKGREY, WHITE, SOLID);
-                    break;
-            }
-
-            gprintf("%c", text[i]);
+        gotogxy(x + i * 2, y);
+        char a = text[i2 - 1];
+        if (a == '0') {
             color(BLACK, WHITE, SOLID);
         }
+        else if (a == '1') {
+            color(LTGREY, WHITE, SOLID);
+        }
+        else if (a == '2') {
+            color(DKGREY, WHITE, SOLID);
+        }
+
+        gprintf("%c", text[i2]);
+        color(BLACK, WHITE, SOLID);
+        i2 += 2;
     }
+    color(BLACK, WHITE, SOLID);
 }
 
-void compare_word(char user[], char ai[], int player_index) {
+char * compare_word(char user[], char ai[]) {
     int checks = 0;
     /*
     * 0 = RESET
@@ -65,18 +55,20 @@ void compare_word(char user[], char ai[], int player_index) {
     * 2 = YELLOW
     */
 
-    for (int user_i = 0; user_i < strlen(user); user_i++) {
+    for (int user_i = 1; user_i < strlen(user); user_i += 2) {
         for (int ai_i = 0; ai_i < strlen(ai); ai_i++) {
             if (user[user_i] == ai[ai_i] && user == ai) {
                 checks += 1;
-                all_color_values[player_index][user_i] = 1;
+                user[user_i - 1] = 1;
             }
             else if (user[user_i] == ai[ai_i]) {
                 checks += 1;
-                all_color_values[player_index][user_i] = 2;
+                user[user_i - 1] = 2;
             }
         }
     }
+
+    return user;
 }
 
 void main() {
@@ -89,7 +81,8 @@ void main() {
     gprintf("Press Start");
 
 
-    draw_word("LMAO", 5, 5, 4, all_color_values[0]);
+    char a[] = "1L0M0A0O";
+    draw_word(a, 5, 5, 4);
 
     waitpad(J_START);
     clear_screen();
@@ -113,32 +106,40 @@ void main() {
         "Y", "Z"
     };
 
-    char player_words[6][6] = {
-        {NULL, NULL, NULL, NULL, NULL, NULL},
-        {NULL, NULL, NULL, NULL, NULL, NULL},
-        {NULL, NULL, NULL, NULL, NULL, NULL},
-        {NULL, NULL, NULL, NULL, NULL, NULL},
-        {NULL, NULL, NULL, NULL, NULL, NULL},
-        {NULL, NULL, NULL, NULL, NULL, NULL}
+    char player_words[6][12] = {
+        {0, NULL, 0, NULL, 0, NULL, 0, NULL, 0, NULL, 0, NULL},
+        {0, NULL, 0, NULL, 0, NULL, 0, NULL, 0, NULL, 0, NULL},
+        {0, NULL, 0, NULL, 0, NULL, 0, NULL, 0, NULL, 0, NULL},
+        {0, NULL, 0, NULL, 0, NULL, 0, NULL, 0, NULL, 0, NULL},
+        {0, NULL, 0, NULL, 0, NULL, 0, NULL, 0, NULL, 0, NULL},
+        {0, NULL, 0, NULL, 0, NULL, 0, NULL, 0, NULL, 0, NULL}
     };
-    char word_choice[6];
-    strcpy(word_choice, WORD_LIST[word_choice_index]);
+    char word_choice[6] = "lmaos";
+    // strcpy(word_choice, WORD_LIST[word_choice_index]);
     int won = 0;
 
     while(1) {
         gotogxy(2, 4);
-        draw_word(player_words[0], 5, 1, 2, all_color_values[0]);
-        draw_word(player_words[1], 5, 1, 4, all_color_values[1]);
-        draw_word(player_words[2], 5, 1, 6, all_color_values[2]);
-        draw_word(player_words[3], 5, 1, 8, all_color_values[3]);
-        draw_word(player_words[4], 5, 1, 10, all_color_values[4]);
-        draw_word(player_words[5], 5, 1, 12, all_color_values[5]);
+        draw_word(player_words[0], 5, 1, 2);
+        draw_word(player_words[1], 5, 1, 4);
+        draw_word(player_words[2], 5, 1, 6);
+        draw_word(player_words[3], 5, 1, 8);
+        draw_word(player_words[4], 5, 1, 10);
+        draw_word(player_words[5], 5, 1, 12);
         
         gotogxy(2, 15);
         gprintf("Input:%c", selected_letter_index);
         
         while(1) {
             joydata = joypad();
+            if (word_index >= 5) {
+                strcpy(player_words[player_index], compare_word(player_words[player_index], word_choice));
+                gotogxy(4, 7);
+                gprintf("lol");
+                player_index += 1;
+                word_index = 0;
+                break;
+            }
             if (joydata & J_RIGHT) {
                 if (selected_letter_index + 1 <= 90) {
                     selected_letter_index++;
@@ -156,15 +157,9 @@ void main() {
                 word_index++;
                 break;
             }
-            if (joydata & J_B && word_index < 5) {
+            if (joydata & J_B && 0 < word_index && word_index < 5) {
                 word_index--;
                 player_words[player_index][word_index] = NULL;
-                break;
-            }
-            if (word_index >= 5) {
-                compare_word(player_words[player_index], word_choice, player_index);
-                player_index += 1;
-                word_index = 0;
                 break;
             }
         }
